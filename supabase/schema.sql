@@ -17,6 +17,11 @@ create table public.floor_plans (
   title text not null,
   source_label text,
   notes text,
+  sqft integer,
+  bedrooms smallint,
+  bathrooms numeric(3,1),
+  garage_spaces smallint,
+  image_url text,
   created_by uuid not null references public.profiles(id) on delete cascade,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

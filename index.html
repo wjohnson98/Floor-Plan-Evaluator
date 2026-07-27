@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Our floor plans</title>
+<title>Wes &amp; Gavin's Forever Home</title>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 
@@ -152,9 +152,23 @@ a:hover { text-decoration: underline; }
 @media (max-width: 860px) { .detail-grid { grid-template-columns: 1fr; } }
 .detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
 .detail-title-block .fp-card-source { margin-bottom: 0; }
-.iframe-wrap { position: relative; width: 100%; height: 70vh; min-height: 420px; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); background: var(--fog-50); }
-.iframe-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
-.iframe-note { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 12px; margin-top: 10px; }
+
+.fp-card-image { width: 100%; aspect-ratio: 4 / 3; border-radius: var(--radius-md); overflow: hidden; background: var(--fog-100); margin-bottom: 14px; }
+.fp-card-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fp-card-image.placeholder { display: flex; align-items: center; justify-content: center; color: var(--fog-400); }
+.hero-image { width: 100%; aspect-ratio: 16 / 10; border-radius: var(--radius-md); overflow: hidden; background: var(--fog-100); border: 1px solid var(--border); }
+.hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-image.placeholder { display: flex; align-items: center; justify-content: center; color: var(--fog-400); }
+.stat-line { color: var(--text-muted); font-size: 12px; margin: -4px 0 14px; }
+.stat-line.lg { font-size: 14px; margin: 4px 0 0; color: var(--text); }
+.image-thumb { width: 100%; aspect-ratio: 16 / 10; border-radius: var(--radius-md); overflow: hidden; background: var(--fog-100); border: 1px solid var(--border); margin-top: 8px; display: flex; align-items: center; justify-content: center; color: var(--fog-400); }
+.image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.filter-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-bottom: 20px; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+.filter-field { display: flex; flex-direction: column; gap: 4px; }
+.filter-field label { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+.filter-field select, .filter-field input { padding: 7px 10px; font-size: 13px; width: 130px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text); }
+.filter-field select:focus, .filter-field input:focus { border-color: var(--border-brand); box-shadow: var(--shadow-input-focus); outline: none; }
 
 .stack { display: flex; flex-direction: column; gap: 16px; }
 .rating-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-light, var(--fog-100)); }
@@ -231,6 +245,7 @@ const state = {
   notes: [],
   ready: false,
   sort: 'best',
+  filters: { minRating: '', minBeds: '', minBaths: '', minGarage: '', minSqft: '' },
   route: parseHash(),
 };
 
@@ -275,6 +290,41 @@ function timeAgo(iso) {
 
 function initials(name) {
   return (name || '?').trim().slice(0, 1).toUpperCase();
+}
+
+// Best-effort only: browsers can't fetch another site's raw HTML directly
+// (CORS), so this goes through a public link-preview API. If it fails or
+// the site isn't supported, the image URL field can always be filled in
+// by hand instead.
+async function fetchPreviewImage(url) {
+  try {
+    const res = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}&palette=false`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json.status !== 'success') return null;
+    const image = json.data?.image?.url || json.data?.logo?.url || null;
+    const title = json.data?.title || null;
+    return { image, title };
+  } catch (e) {
+    return null;
+  }
+}
+
+function statLine(plan, cls = 'stat-line') {
+  const parts = [];
+  if (plan.bedrooms != null) parts.push(`${plan.bedrooms} bd`);
+  if (plan.bathrooms != null) parts.push(`${plan.bathrooms} ba`);
+  if (plan.garage_spaces != null) parts.push(`${plan.garage_spaces} car garage`);
+  if (plan.sqft != null) parts.push(`${Number(plan.sqft).toLocaleString()} sqft`);
+  if (!parts.length) return '';
+  return `<div class="${cls}">${parts.join(' · ')}</div>`;
+}
+
+function cardImage(plan) {
+  if (plan.image_url) {
+    return `<div class="fp-card-image"><img src="${escapeHtml(plan.image_url)}" alt="" loading="lazy" onerror="this.parentElement.classList.add('placeholder');this.remove()" /></div>`;
+  }
+  return `<div class="fp-card-image placeholder">${icon('location', 'icon-lg')}</div>`;
 }
 
 function parseHash() {
@@ -428,22 +478,24 @@ async function deleteNote(noteId) {
   render();
 }
 
-async function createFloorPlan({ url, title, notes }) {
+async function createFloorPlan({ url, title, notes, sqft, bedrooms, bathrooms, garage_spaces, image_url }) {
   const source_label = hostnameOf(url);
   const { data, error } = await sb.from('floor_plans').insert({
     url, title: title || source_label || 'Untitled floor plan', notes: notes || null,
-    source_label, created_by: state.profile.id,
+    source_label, sqft, bedrooms, bathrooms, garage_spaces, image_url: image_url || null,
+    created_by: state.profile.id,
   }).select().single();
   if (error) { showToast("Couldn't save that floor plan — try again.", 'alert'); return null; }
   await loadAll();
   return data;
 }
 
-async function updateFloorPlan(id, { url, title, notes }) {
+async function updateFloorPlan(id, { url, title, notes, sqft, bedrooms, bathrooms, garage_spaces, image_url }) {
   const source_label = hostnameOf(url);
   const { error } = await sb.from('floor_plans').update({
     url, title: title || source_label || 'Untitled floor plan', notes: notes || null,
-    source_label, updated_at: new Date().toISOString(),
+    source_label, sqft, bedrooms, bathrooms, garage_spaces, image_url: image_url || null,
+    updated_at: new Date().toISOString(),
   }).eq('id', id);
   if (error) { showToast("Couldn't save your changes — try again.", 'alert'); return false; }
   await loadAll();
@@ -464,7 +516,7 @@ function renderNavbar() {
   const p = state.profile;
   return `
     <div class="navbar">
-      <a href="#/" class="navbar-brand">${icon('location')}<span>Our floor plans</span></a>
+      <a href="#/" class="navbar-brand">${icon('location')}<span>Wes &amp; Gavin's forever home</span></a>
       <div class="navbar-user">
         ${p ? `<span class="avatar" style="background:${p.color}">${initials(p.display_name)}</span><span class="sm">${escapeHtml(p.display_name)}</span>` : ''}
         <button class="btn btn-ghost" id="sign-out-btn">Sign out</button>
@@ -511,8 +563,10 @@ function renderFloorPlanCard(plan) {
 
   return `
     <a class="fp-card" href="#/floorplans/${plan.id}">
+      ${cardImage(plan)}
       <div class="card-title">${escapeHtml(plan.title)}</div>
       <div class="fp-card-source">${icon('search', 'icon-xs')}${escapeHtml(plan.source_label || '')}</div>
+      ${statLine(plan)}
       <div class="fp-card-ratings">${rows}</div>
       <div class="fp-card-footer">
         ${badge}
@@ -521,8 +575,27 @@ function renderFloorPlanCard(plan) {
     </a>`;
 }
 
-function sortedFloorPlans() {
-  const list = [...state.floorPlans];
+function filterFloorPlans(list) {
+  const f = state.filters;
+  return list.filter((p) => {
+    if (f.minRating) {
+      const avg = averageFor(p.id);
+      if (avg === null || avg < parseFloat(f.minRating)) return false;
+    }
+    if (f.minBeds && (p.bedrooms == null || p.bedrooms < parseFloat(f.minBeds))) return false;
+    if (f.minBaths && (p.bathrooms == null || p.bathrooms < parseFloat(f.minBaths))) return false;
+    if (f.minGarage && (p.garage_spaces == null || p.garage_spaces < parseFloat(f.minGarage))) return false;
+    if (f.minSqft && (p.sqft == null || p.sqft < parseFloat(f.minSqft))) return false;
+    return true;
+  });
+}
+
+function hasActiveFilters() {
+  return Object.values(state.filters).some((v) => v !== '');
+}
+
+function visibleFloorPlans() {
+  const list = filterFloorPlans(state.floorPlans);
   if (state.sort === 'newest') {
     list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   } else if (state.sort === 'liked') {
@@ -539,27 +612,77 @@ function sortedFloorPlans() {
   return list;
 }
 
+function renderFilterBar() {
+  const f = state.filters;
+  const opt = (val, current, label) => `<option value="${val}" ${current === val ? 'selected' : ''}>${label}</option>`;
+  return `
+    <div class="filter-bar">
+      <div class="filter-field">
+        <label>Min rating</label>
+        <select id="filter-rating" data-filter="minRating">
+          ${opt('', f.minRating, 'Any')}${opt('3', f.minRating, '3★+')}${opt('3.5', f.minRating, '3.5★+')}${opt('4', f.minRating, '4★+')}${opt('4.5', f.minRating, '4.5★+')}${opt('5', f.minRating, '5★')}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Bedrooms</label>
+        <select id="filter-beds" data-filter="minBeds">
+          ${opt('', f.minBeds, 'Any')}${opt('1', f.minBeds, '1+')}${opt('2', f.minBeds, '2+')}${opt('3', f.minBeds, '3+')}${opt('4', f.minBeds, '4+')}${opt('5', f.minBeds, '5+')}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Bathrooms</label>
+        <select id="filter-baths" data-filter="minBaths">
+          ${opt('', f.minBaths, 'Any')}${opt('1', f.minBaths, '1+')}${opt('1.5', f.minBaths, '1.5+')}${opt('2', f.minBaths, '2+')}${opt('2.5', f.minBaths, '2.5+')}${opt('3', f.minBaths, '3+')}${opt('3.5', f.minBaths, '3.5+')}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Garage</label>
+        <select id="filter-garage" data-filter="minGarage">
+          ${opt('', f.minGarage, 'Any')}${opt('1', f.minGarage, '1+ car')}${opt('2', f.minGarage, '2+ car')}${opt('3', f.minGarage, '3+ car')}${opt('4', f.minGarage, '4+ car')}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Min sqft</label>
+        <input type="number" id="filter-sqft" data-filter="minSqft" placeholder="e.g. 2000" value="${escapeHtml(f.minSqft)}" min="0" />
+      </div>
+      ${hasActiveFilters() ? `<button class="btn btn-ghost" id="clear-filters-btn">${icon('close', 'icon-sm')}Clear filters</button>` : ''}
+    </div>`;
+}
+
 function renderDashboard() {
-  const list = sortedFloorPlans();
+  const list = visibleFloorPlans();
   const people = Object.values(state.profilesById);
   const partner = people.find((p) => p.id !== state.profile.id);
   const subtitle = state.floorPlans.length === 0
-    ? `Start logging the floor plans ${escapeHtml(partner ? 'you and ' + partner.display_name : 'you two')} are considering.`
-    : `You and ${escapeHtml(partner ? partner.display_name : 'your partner')} have logged ${state.floorPlans.length} floor plan${state.floorPlans.length === 1 ? '' : 's'}.`;
+    ? `Start logging the floor plans ${escapeHtml(partner ? 'you and ' + partner.display_name : 'you two')} are considering for your forever home.`
+    : `You and ${escapeHtml(partner ? partner.display_name : 'your partner')} have logged ${state.floorPlans.length} floor plan${state.floorPlans.length === 1 ? '' : 's'} for your forever home.`;
 
-  const grid = list.length ? list.map(renderFloorPlanCard).join('') : `
+  let grid;
+  if (list.length) {
+    grid = list.map(renderFloorPlanCard).join('');
+  } else if (state.floorPlans.length === 0) {
+    grid = `
     <div class="empty-state">
       ${icon('location', 'icon-lg')}
       <div class="h2" style="margin-bottom:8px">No floor plans yet</div>
-      <p class="sm muted" style="margin-bottom:20px">Paste a link from a builder's site or listing to start comparing your favorites.</p>
+      <p class="sm muted" style="margin-bottom:20px">Paste a link from a builder's site or listing to start comparing floor plans for your forever home.</p>
       <a class="btn btn-primary" href="#/floorplans/new">${icon('add', 'icon-sm')}Add floor plan</a>
     </div>`;
+  } else {
+    grid = `
+    <div class="empty-state">
+      ${icon('search', 'icon-lg')}
+      <div class="h2" style="margin-bottom:8px">No floor plans match your filters</div>
+      <p class="sm muted" style="margin-bottom:20px">Try loosening a filter to see more options.</p>
+      <button class="btn btn-primary" id="clear-filters-btn-2">${icon('close', 'icon-sm')}Clear filters</button>
+    </div>`;
+  }
 
   return `
     <div class="page">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Floor plans</h1>
+          <h1 class="page-title">Our forever home</h1>
           <p class="sm muted" style="margin-top:4px">${subtitle}</p>
         </div>
         <div class="page-header-actions">
@@ -571,12 +694,14 @@ function renderDashboard() {
           <a class="btn btn-primary" href="#/floorplans/new">${icon('add', 'icon-sm')}Add floor plan</a>
         </div>
       </div>
+      ${renderFilterBar()}
       <div class="fp-grid">${grid}</div>
     </div>`;
 }
 
 function renderFloorPlanForm({ mode, plan }) {
   const isEdit = mode === 'edit';
+  const v = (field) => plan && plan[field] != null ? plan[field] : '';
   return `
     <div class="page" style="max-width:560px">
       <a href="#/${isEdit ? 'floorplans/' + plan.id : ''}" class="back-link">${icon('arrowLeft', 'icon-sm')}${isEdit ? 'Back to floor plan' : 'Back to floor plans'}</a>
@@ -584,16 +709,42 @@ function renderFloorPlanForm({ mode, plan }) {
       <form id="fp-form" class="card">
         <div class="field" id="url-field">
           <label>Link to the floor plan *</label>
-          <input id="fp-url" type="text" placeholder="https://..." value="${escapeHtml(plan ? plan.url : '')}" />
-          <span class="hint">Paste the public page from any floor plan or listing site.</span>
+          <div style="display:flex;gap:8px">
+            <input id="fp-url" type="text" placeholder="https://..." value="${escapeHtml(plan ? plan.url : '')}" style="flex:1" />
+            <button type="button" class="btn btn-secondary" id="fetch-preview-btn">Fetch preview</button>
+          </div>
+          <span class="hint">Paste the public page from any floor plan or listing site, then fetch its photo — some sites don't support this, so you can always paste an image link below instead.</span>
         </div>
         <div class="field">
           <label>Title</label>
           <input id="fp-title" type="text" placeholder="Auto-filled from the link if left blank" value="${escapeHtml(plan ? plan.title : '')}" />
         </div>
         <div class="field">
+          <label>Image link</label>
+          <input id="fp-image" type="text" placeholder="https://... (a photo or rendering of the plan)" value="${escapeHtml(v('image_url'))}" />
+          <div class="image-thumb" id="image-thumb">${v('image_url') ? `<img src="${escapeHtml(v('image_url'))}" alt="" />` : icon('location', 'icon-lg')}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="field">
+            <label>Bedrooms</label>
+            <input id="fp-beds" type="number" min="0" step="1" placeholder="e.g. 3" value="${escapeHtml(v('bedrooms'))}" />
+          </div>
+          <div class="field">
+            <label>Bathrooms</label>
+            <input id="fp-baths" type="number" min="0" step="0.5" placeholder="e.g. 2.5" value="${escapeHtml(v('bathrooms'))}" />
+          </div>
+          <div class="field">
+            <label>Garage (cars)</label>
+            <input id="fp-garage" type="number" min="0" step="1" placeholder="e.g. 2" value="${escapeHtml(v('garage_spaces'))}" />
+          </div>
+          <div class="field">
+            <label>Square feet</label>
+            <input id="fp-sqft" type="number" min="0" step="1" placeholder="e.g. 2400" value="${escapeHtml(v('sqft'))}" />
+          </div>
+        </div>
+        <div class="field">
           <label>Notes</label>
-          <textarea id="fp-notes" placeholder="e.g. 3 bed, 2200 sqft, corner lot">${escapeHtml(plan ? plan.notes || '' : '')}</textarea>
+          <textarea id="fp-notes" placeholder="e.g. corner lot, open concept kitchen">${escapeHtml(plan ? plan.notes || '' : '')}</textarea>
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end">
           <a class="btn btn-ghost" href="#/${isEdit ? 'floorplans/' + plan.id : ''}">Cancel</a>
@@ -647,6 +798,14 @@ function renderDetail(plan) {
     </div>`;
   }).join('');
 
+  const myRow = `<div class="rating-row">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="avatar" style="background:${state.profile.color}">${initials(state.profile.display_name)}</span>
+        <span class="sm">${escapeHtml(state.profile.display_name)} (you)</span>
+      </div>
+      ${starsInput(plan.id, myRating ? myRating.stars : 0)}
+    </div>`;
+
   return `
     <div class="page">
       <a href="#/" class="back-link">${icon('arrowLeft', 'icon-sm')}All floor plans</a>
@@ -654,9 +813,10 @@ function renderDetail(plan) {
         <div class="detail-title-block">
           <h1 class="h2">${escapeHtml(plan.title)}</h1>
           <div class="fp-card-source">${icon('search', 'icon-xs')}${escapeHtml(plan.source_label || '')}</div>
+          ${statLine(plan, 'stat-line lg')}
         </div>
         <div style="display:flex;gap:8px;align-items:center">
-          <a class="btn btn-secondary" id="open-original" target="_blank" rel="noopener noreferrer">${icon('location', 'icon-sm')}Open original</a>
+          <a class="btn btn-primary" id="open-original" target="_blank" rel="noopener noreferrer">${icon('location', 'icon-sm')}Open original</a>
           <a class="btn btn-ghost btn-icon" href="#/floorplans/${plan.id}/edit" aria-label="Edit">${icon('edit', 'icon-sm')}</a>
           <button class="btn btn-ghost btn-icon" id="delete-plan-btn" aria-label="Delete">${icon('trash', 'icon-sm')}</button>
         </div>
@@ -666,13 +826,14 @@ function renderDetail(plan) {
 
       <div class="detail-grid">
         <div>
-          <div class="iframe-wrap"><iframe id="fp-iframe" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-popups-to-escape-sandbox" title="${escapeHtml(plan.title)}"></iframe></div>
-          <div class="iframe-note">${icon('search', 'icon-xs')}Some sites block embedding — if this looks empty, use "Open original" above.</div>
+          ${plan.image_url
+            ? `<div class="hero-image"><img src="${escapeHtml(plan.image_url)}" alt="${escapeHtml(plan.title)}" onerror="this.parentElement.classList.add('placeholder');this.remove()" /></div>`
+            : `<div class="hero-image placeholder">${icon('location', 'icon-lg')}</div>`}
         </div>
         <div class="stack">
           <div class="card">
-            <div class="label sm" style="margin-bottom:10px">Your rating</div>
-            ${starsInput(plan.id, myRating ? myRating.stars : 0)}
+            <div class="label sm" style="margin-bottom:10px">Ratings</div>
+            ${myRow}
             ${otherRatingRows}
             ${avg !== null ? `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)"><span class="badge badge-mint">${avg.toFixed(1)}★ combined average</span></div>` : ''}
           </div>
@@ -689,7 +850,8 @@ function renderLogin() {
   return `
     <div class="login-wrap">
       <div class="login-card">
-        <div class="login-brand">${icon('location')}<span class="h2">Our floor plans</span></div>
+        <div class="login-brand">${icon('location')}<span class="h2">Wes &amp; Gavin's forever home</span></div>
+        <p class="sm muted" style="text-align:center;margin-bottom:20px">Sign in to keep comparing floor plans for our forever home.</p>
         <div class="card">
           <div class="field" id="login-email-field">
             <label>Email</label>
@@ -747,9 +909,7 @@ function render() {
   if (state.route.name === 'detail') {
     const plan = state.floorPlans.find((p) => p.id === state.route.id);
     if (plan) {
-      const iframeEl = document.getElementById('fp-iframe');
       const openLink = document.getElementById('open-original');
-      if (iframeEl) iframeEl.src = plan.url;
       if (openLink) openLink.href = plan.url;
     }
   }
@@ -790,6 +950,17 @@ function attachHandlers() {
   const sortSelect = document.getElementById('sort-select');
   if (sortSelect) sortSelect.addEventListener('change', (e) => { state.sort = e.target.value; render(); });
 
+  document.querySelectorAll('[data-filter]').forEach((el) => {
+    el.addEventListener('change', (e) => { state.filters[el.dataset.filter] = e.target.value; render(); });
+  });
+  ['clear-filters-btn', 'clear-filters-btn-2'].forEach((id) => {
+    const btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', () => {
+      state.filters = { minRating: '', minBeds: '', minBaths: '', minGarage: '', minSqft: '' };
+      render();
+    });
+  });
+
   document.querySelectorAll('[data-star-input]').forEach((wrap) => {
     const planId = wrap.dataset.plan;
     wrap.querySelectorAll('[data-star-btn]').forEach((btn) => {
@@ -821,6 +992,42 @@ function attachHandlers() {
     });
   }
 
+  const imageInput = document.getElementById('fp-image');
+  const imageThumb = document.getElementById('image-thumb');
+  function updateImageThumb(url) {
+    if (!imageThumb) return;
+    if (!url) { imageThumb.innerHTML = icon('location', 'icon-lg'); return; }
+    const img = document.createElement('img');
+    img.alt = '';
+    img.addEventListener('error', () => { imageThumb.innerHTML = icon('location', 'icon-lg'); }, { once: true });
+    img.src = url;
+    imageThumb.innerHTML = '';
+    imageThumb.appendChild(img);
+  }
+  if (imageInput) imageInput.addEventListener('input', (e) => updateImageThumb(e.target.value.trim()));
+
+  const fetchPreviewBtn = document.getElementById('fetch-preview-btn');
+  if (fetchPreviewBtn) {
+    fetchPreviewBtn.addEventListener('click', async () => {
+      const url = normalizeUrl(document.getElementById('fp-url').value);
+      if (!url) { showToast('Enter a valid link first.', 'alert'); return; }
+      fetchPreviewBtn.disabled = true;
+      fetchPreviewBtn.textContent = 'Fetching…';
+      const preview = await fetchPreviewImage(url);
+      fetchPreviewBtn.disabled = false;
+      fetchPreviewBtn.textContent = 'Fetch preview';
+      if (!preview || !preview.image) {
+        showToast("Couldn't fetch a preview image — paste one instead.", 'alert');
+        return;
+      }
+      imageInput.value = preview.image;
+      updateImageThumb(preview.image);
+      const titleInput = document.getElementById('fp-title');
+      if (preview.title && !titleInput.value.trim()) titleInput.value = preview.title;
+      showToast('Preview image found');
+    });
+  }
+
   const fpForm = document.getElementById('fp-form');
   if (fpForm) {
     fpForm.addEventListener('submit', async (e) => {
@@ -828,6 +1035,15 @@ function attachHandlers() {
       const rawUrl = document.getElementById('fp-url').value;
       const title = document.getElementById('fp-title').value.trim();
       const notes = document.getElementById('fp-notes').value.trim();
+      const image_url = document.getElementById('fp-image').value.trim();
+      const numOrNull = (id) => {
+        const v = document.getElementById(id).value;
+        return v === '' ? null : parseFloat(v);
+      };
+      const sqft = numOrNull('fp-sqft');
+      const bedrooms = numOrNull('fp-beds');
+      const bathrooms = numOrNull('fp-baths');
+      const garage_spaces = numOrNull('fp-garage');
       const url = normalizeUrl(rawUrl);
       const urlField = document.getElementById('url-field');
       urlField.classList.remove('has-error');
@@ -838,14 +1054,15 @@ function attachHandlers() {
         urlField.insertAdjacentHTML('beforeend', `<span class="error-text">Enter a valid link, starting with https://</span>`);
         return;
       }
+      const payload = { url, title, notes, sqft, bedrooms, bathrooms, garage_spaces, image_url };
       const submitBtn = fpForm.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       if (state.route.name === 'edit') {
-        const ok = await updateFloorPlan(state.route.id, { url, title, notes });
+        const ok = await updateFloorPlan(state.route.id, payload);
         submitBtn.disabled = false;
         if (ok) { showToast('Changes saved'); navigate(`/floorplans/${state.route.id}`); }
       } else {
-        const created = await createFloorPlan({ url, title, notes });
+        const created = await createFloorPlan(payload);
         submitBtn.disabled = false;
         if (created) { showToast('Floor plan added'); navigate(`/floorplans/${created.id}`); }
       }

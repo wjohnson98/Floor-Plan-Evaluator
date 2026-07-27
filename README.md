@@ -1,11 +1,12 @@
-# Floor Plan Evaluator
+# Wes & Gavin's Forever Home
 
-A single static HTML page for you and your partner to log floor plans you find online, rate them, and track what each of you likes and doesn't like — so you can converge on the one you both love.
+A single static HTML page for Wes and Gavin to log floor plans found online, rate them, and track what each of them likes and doesn't like — so they can converge on the one they both love for their forever home.
 
 - One file: `index.html` (HTML + CSS + JS, no build step, no framework).
 - Data lives in [Supabase](https://supabase.com) (Postgres + Auth), free tier is plenty.
 - Routing is hash-based (`#/floorplans/<uuid>`) so every floor plan, the add form, etc. get their own shareable/bookmarkable URL with zero server configuration — works on any static host, including GitHub Pages.
-- Each floor plan embeds the original listing/builder page in an iframe so you can review it without leaving the app (some sites block embedding — an "Open original" link is always shown as a fallback).
+- Each floor plan tracks square footage, bedrooms, bathrooms, and garage size, plus a hero photo — either auto-fetched from the link or pasted in by hand (most listing sites block iframes and don't allow their raw HTML to be fetched cross-origin from the browser, so embedding the page directly isn't reliable — a prominent "Open original" link is always there instead).
+- Filters on the dashboard narrow the list by minimum rating, bedrooms, bathrooms, garage size, and square footage.
 
 ## 1. Create a Supabase project
 
@@ -17,7 +18,7 @@ A single static HTML page for you and your partner to log floor plans you find o
 Sign-up is intentionally not exposed in the app — you create exactly two accounts yourselves:
 
 1. In the Supabase dashboard, go to **Authentication → Users → Add user**.
-2. Create one user for yourself and one for your boyfriend (email + password each). Use "Auto Confirm User" so you don't need to click an email link.
+2. Create one user for Wes and one for Gavin (email + password each). Use "Auto Confirm User" so you don't need to click an email link.
 
 The first time each of you signs into the app, it'll ask what name to display (e.g. "Wes") — that's stored automatically, no further setup needed.
 
@@ -46,7 +47,8 @@ Because routing is hash-based (`#/...`), there's no extra GitHub Pages configura
 
 ## Using it
 
-- **Add floor plan** — paste the public link from any floor plan or listing site. Title auto-fills from the domain if you leave it blank.
-- **Floor plan detail** — the original page loads in an embedded frame; rate it 1–5 stars; add notes under "What you like" / "What you don't like" — each note is tagged with your name so you can both see who said what.
-- **Dashboard** — sort by best match (combined average, both-of-you-rated plans first), newest, or most liked. A plan gets a "you both love it" badge once you've both rated it 4★ or higher.
+- **Add floor plan** — paste the public link from any floor plan or listing site, then click "Fetch preview" to try pulling its hero photo automatically. That only works on sites that support link-preview fetching (via a public API, since a static page can't scrape another site's HTML directly) — if it comes up empty, just paste an image URL into the "Image link" field instead. Fill in sqft, bedrooms, bathrooms, and garage size if you have them; title auto-fills from the domain if left blank.
+- **Floor plan detail** — hero photo up top, "Open original" always visible to jump to the real listing; rate it 1–5 stars (you'll see your partner's rating right alongside yours); add notes under "What you like" / "What you don't like" — each note is tagged with your name so you can both see who said what.
+- **Dashboard filters** — narrow the list by minimum rating, bedrooms, bathrooms, garage size, or square footage; combine as many as you like.
+- **Dashboard sort** — best match (combined average, both-of-you-rated plans first), newest, or most liked. A plan gets a "you both love it" badge once you've both rated it 4★ or higher.
 - Changes sync live between your two sessions (via Supabase Realtime) — no refresh needed to see your partner's latest rating or note.
