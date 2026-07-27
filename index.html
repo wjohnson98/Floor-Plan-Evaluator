@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Our floor plans</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
+:root {
+  --white: #ffffff;
+  --lightning-50: #f5f7ff; --lightning-100: #ebf0ff; --lightning-200: #ccd9ff;
+  --lightning-300: #99b3ff; --lightning-400: #668cff; --lightning-500: #3366ff;
+  --lightning-600: #264dc3; --lightning-700: #193586; --lightning-800: #0d1c4a; --lightning-900: #001238;
+  --mint-100: #ebf9f6; --mint-200: #ccefe7; --mint-500: #32c0a0; --mint-800: #0c3332;
+  --dusk-100: #feeeef; --dusk-200: #fcd5d7; --dusk-500: #f3565d; --dusk-600: #b64149; --dusk-800: #3d1617;
+  --solar-100: #fff9ea; --solar-200: #feefcb; --solar-400: #fcd062; --solar-500: #fbc02d; --solar-800: #3f3316;
+  --fog-50: #f8f9fa; --fog-100: #f1f3f4; --fog-200: #e4e6ea; --fog-300: #dde0e4;
+  --fog-400: #bbc1ca; --fog-500: #99a1af; --fog-600: #778295; --fog-700: #596273; --fog-800: #3b4351;
+
+  --bg: var(--fog-100);
+  --bg-surface: var(--white);
+  --bg-surface-muted: var(--fog-200);
+  --text: var(--lightning-900);
+  --text-muted: var(--fog-600);
+  --text-on-brand: var(--white);
+  --text-alert: var(--dusk-500);
+  --border: var(--fog-200);
+  --border-strong: var(--fog-300);
+  --border-brand: var(--lightning-500);
+  --border-alert: var(--dusk-500);
+  --color-primary: var(--lightning-500);
+  --color-primary-hover: var(--lightning-600);
+  --color-primary-active: var(--lightning-700);
+
+  --shadow-button-focus: 0 0 0 4px rgba(51, 102, 255, 0.6);
+  --shadow-input-focus: 0 0 8px 0 rgba(51, 102, 255, 0.5);
+  --shadow-card: 0 4px 64px 0 rgba(119, 130, 149, 0.10);
+
+  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px; --radius-pill: 100px;
+  --font-brand: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; font-family: var(--font-brand); font-size: 14px; line-height: 20px;
+  color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p { margin: 0; }
+button { font-family: inherit; }
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.page-title { font-weight: 600; font-size: 28px; line-height: 36px; letter-spacing: -0.01em; }
+.h2 { font-weight: 600; font-size: 18px; line-height: 24px; }
+.card-title { font-weight: 600; font-size: 16px; line-height: 22px; }
+.label { font-weight: 600; font-size: 14px; }
+.sm { font-size: 12px; line-height: 18px; }
+.xs { font-size: 11px; line-height: 14px; color: var(--text-muted); }
+.muted { color: var(--text-muted); }
+
+/* icons */
+.icon { display: inline-flex; width: 20px; height: 20px; flex: none; }
+.icon svg { width: 100%; height: 100%; display: block; }
+.icon-sm { width: 16px; height: 16px; }
+.icon-xs { width: 14px; height: 14px; }
+.icon-lg { width: 32px; height: 32px; }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-weight: 600; font-size: 14px; line-height: 20px; padding: 9px 20px;
+  border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer;
+  background: transparent; transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  white-space: nowrap;
+}
+.btn:focus-visible { box-shadow: var(--shadow-button-focus); outline: none; }
+.btn-primary { background: var(--color-primary); color: var(--text-on-brand); }
+.btn-primary:hover { background: var(--color-primary-hover); }
+.btn-primary:active { background: var(--color-primary-active); }
+.btn-primary:disabled { background: var(--lightning-300); pointer-events: none; }
+.btn-secondary { background: transparent; color: var(--color-primary); border-color: var(--border); }
+.btn-secondary:hover { background: var(--lightning-100); }
+.btn-ghost { background: transparent; color: var(--text-muted); }
+.btn-ghost:hover { background: var(--fog-100); color: var(--text); }
+.btn-danger { background: transparent; color: var(--text-alert); }
+.btn-danger:hover { background: var(--dusk-100); }
+.btn-icon { padding: 8px; border-radius: var(--radius-pill); }
+.btn-block { width: 100%; }
+
+/* fields */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.field input, .field textarea, .field select {
+  font-family: var(--font-brand); font-size: 14px; line-height: 20px; color: var(--text);
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 10px 12px; outline: none; transition: box-shadow .15s ease, border-color .15s ease; width: 100%;
+}
+.field textarea { resize: vertical; min-height: 72px; }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--border-brand); box-shadow: var(--shadow-input-focus); }
+.field .error-text { color: var(--text-alert); font-size: 12px; }
+.field .hint { color: var(--text-muted); font-size: 12px; }
+.field.has-error input, .field.has-error textarea { border-color: var(--border-alert); }
+.inline-add { display: flex; gap: 8px; }
+.inline-add input { flex: 1; }
+
+/* card */
+.card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-card); padding: 24px; }
+
+/* badges */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; line-height: 18px; white-space: nowrap; }
+.badge-mint { background: var(--mint-100); color: var(--mint-800); }
+.badge-solar { background: var(--solar-200); color: var(--solar-800); }
+.badge-fog { background: var(--fog-200); color: var(--fog-800); }
+.badge-lightning { background: var(--lightning-100); color: var(--lightning-900); }
+
+/* avatar */
+.avatar { width: 22px; height: 22px; border-radius: 100px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; flex: none; }
+
+/* stars */
+.stars { display: inline-flex; gap: 2px; align-items: center; }
+.stars .icon { color: var(--fog-300); }
+.stars .icon.filled { color: var(--solar-500); }
+.stars.interactive button { background: none; border: none; padding: 0; cursor: pointer; color: var(--fog-300); line-height: 0; }
+.stars.interactive button.filled { color: var(--solar-500); }
+.stars.interactive button:hover { color: var(--solar-400); }
+
+/* navbar */
+.navbar { position: sticky; top: 0; z-index: 100; height: 56px; background: var(--bg-surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+.navbar-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; color: var(--text); }
+.navbar-brand .icon { color: var(--color-primary); }
+.navbar-user { display: flex; align-items: center; gap: 10px; }
+
+/* layout */
+.page { max-width: 1080px; margin: 0 auto; padding: 32px 24px 80px; }
+.page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.page-header-actions { display: flex; align-items: center; gap: 12px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 600; font-size: 13px; margin-bottom: 16px; }
+.back-link:hover { color: var(--text); text-decoration: none; }
+
+.fp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.fp-card { display: block; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-card); padding: 20px; color: var(--text); transition: border-color .15s ease; }
+.fp-card:hover { border-color: var(--border-brand); text-decoration: none; }
+.fp-card-source { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 12px; margin-top: 2px; margin-bottom: 14px; }
+.fp-card-ratings { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.fp-card-rating-row { display: flex; align-items: center; gap: 8px; }
+.fp-card-rating-row .name { font-size: 12px; color: var(--text-muted); width: 64px; flex: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fp-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+.empty-state { grid-column: 1 / -1; text-align: center; padding: 64px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+.empty-state .icon { color: var(--fog-400); margin: 0 auto 16px; }
+
+.detail-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: start; }
+@media (max-width: 860px) { .detail-grid { grid-template-columns: 1fr; } }
+.detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.detail-title-block .fp-card-source { margin-bottom: 0; }
+.iframe-wrap { position: relative; width: 100%; height: 70vh; min-height: 420px; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); background: var(--fog-50); }
+.iframe-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
+.iframe-note { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 12px; margin-top: 10px; }
+
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.rating-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-light, var(--fog-100)); }
+.rating-row:last-child { border-bottom: none; }
+.note-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.note-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+.note-item .note-body { flex: 1; }
+.note-item .note-meta { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+.note-item .note-del { flex: none; }
+.note-section + .note-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--fog-100); }
+
+/* login */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-card { width: 100%; max-width: 360px; }
+.login-brand { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 24px; }
+.login-brand .icon { color: var(--color-primary); }
+
+/* modal */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(119, 130, 149, 0.10); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+.modal { background: var(--bg-surface); border-radius: var(--radius-md); box-shadow: var(--shadow-card); border: 1px solid var(--border); padding: 24px; max-width: 420px; width: 100%; }
+
+/* toast */
+#toast-root { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1100; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+.toast { background: var(--lightning-900); color: #fff; padding: 10px 20px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-card); display: flex; align-items: center; gap: 8px; }
+.toast.alert { background: var(--dusk-600); }
+
+.loading-shell { padding: 80px 24px; text-align: center; color: var(--text-muted); }
+.setup-notice { max-width: 560px; margin: 80px auto; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+/* =========================================================================
+   CONFIG — replace with your own Supabase project values.
+   Project settings → API → Project URL / anon public key.
+   The anon key is meant to be public; row-level security (see
+   supabase/schema.sql) is what actually protects the data.
+   ========================================================================= */
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+/* ========================================================================= */
+
+const PALETTE = ['#3366FF', '#32C0A0']; // Lightning, Mint — assigned in signup order
+
+const ICONS = {
+  star: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.5625 7.45312C16.9271 7.48958 17.1641 7.68099 17.2735 8.02734C17.3828 8.3737 17.3099 8.67448 17.0547 8.92969L14.1563 11.7461L14.8399 15.7383C14.8946 16.0846 14.7761 16.3581 14.4844 16.5586C14.1927 16.7773 13.892 16.8047 13.5821 16.6406L10 14.7812L6.41799 16.6406C6.1081 16.8229 5.80732 16.8047 5.51565 16.5859C5.22398 16.3672 5.10549 16.0846 5.16018 15.7383L5.84377 11.7461L2.94534 8.92969C2.69013 8.67448 2.61721 8.3737 2.72659 8.02734C2.83596 7.68099 3.07294 7.48958 3.43752 7.45312L7.42971 6.85156L9.20706 3.24219C9.37112 2.91406 9.63544 2.75 10 2.75C10.3646 2.75 10.6289 2.91406 10.793 3.24219L12.5703 6.85156L16.5625 7.45312ZM12.7617 11.2812L15.4961 8.60156L11.6953 8.05469L10 4.60938L8.30471 8.05469L4.50393 8.60156L7.23831 11.2812L6.6094 15.082L10 13.2773L13.3906 15.082L12.7617 11.2812Z" fill="currentColor"/></svg>`,
+  starSolid: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.20706 3.24219C9.37112 2.91406 9.63544 2.75 10 2.75C10.3646 2.75 10.6289 2.91406 10.793 3.24219L12.5703 6.85156L16.5625 7.45312C16.9271 7.48958 17.1641 7.68099 17.2735 8.02734C17.3828 8.3737 17.3099 8.67448 17.0547 8.92969L14.1563 11.7461L14.8399 15.7383C14.8946 16.0846 14.7761 16.3581 14.4844 16.5586C14.1927 16.7773 13.892 16.8047 13.5821 16.6406L10 14.7812L6.41799 16.6406C6.1081 16.8229 5.80732 16.8047 5.51565 16.5859C5.22398 16.3672 5.10549 16.0846 5.16018 15.7383L5.84377 11.7461L2.94534 8.92969C2.69013 8.67448 2.61721 8.3737 2.72659 8.02734C2.83596 7.68099 3.07294 7.48958 3.43752 7.45312L7.42971 6.85156L9.20706 3.24219Z" fill="currentColor"/></svg>`,
+  add: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.8125 8.875C14.9401 8.875 15.0404 8.92057 15.1133 9.01172C15.2044 9.08464 15.25 9.1849 15.25 9.3125V10.1875C15.25 10.3151 15.2044 10.4245 15.1133 10.5156C15.0404 10.5885 14.9401 10.625 14.8125 10.625H10.875V14.5625C10.875 14.6901 10.8294 14.7995 10.7383 14.8906C10.6654 14.9635 10.5651 15 10.4375 15H9.5625C9.4349 15 9.32552 14.9635 9.23438 14.8906C9.16146 14.7995 9.125 14.6901 9.125 14.5625V10.625H5.1875C5.0599 10.625 4.95052 10.5885 4.85938 10.5156C4.78646 10.4245 4.75 10.3151 4.75 10.1875V9.3125C4.75 9.1849 4.78646 9.08464 4.85938 9.01172C4.95052 8.92057 5.0599 8.875 5.1875 8.875H9.125V4.9375C9.125 4.8099 9.16146 4.70964 9.23438 4.63672C9.32552 4.54557 9.4349 4.5 9.5625 4.5H10.4375C10.5651 4.5 10.6654 4.54557 10.7383 4.63672C10.8294 4.70964 10.875 4.8099 10.875 4.9375V8.875H14.8125Z" fill="currentColor"/></svg>`,
+  edit: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.4805 4.77344C16.845 5.13802 17.0273 5.57552 17.0273 6.08594C17.0273 6.59635 16.845 7.03385 16.4805 7.39844L7.86718 16.0664L3.79296 16.75C3.57421 16.7865 3.38281 16.7227 3.21874 16.5586C3.05468 16.3945 2.99088 16.2031 3.02734 15.9844L3.71093 11.9102L12.3789 3.29688C12.7435 2.93229 13.181 2.75 13.6914 2.75C14.2018 2.75 14.6393 2.93229 15.0039 3.29688L16.4805 4.77344ZM6.33593 11.0078H7.45703V12.3203H8.76953V13.4414L13.3906 8.79297L10.9844 6.38672L6.33593 11.0078ZM5.26953 15.2734L7.29296 14.9453L7.78515 14.4531V13.3047H6.47265V11.9922H5.32421L4.83203 12.4844L4.5039 14.5078L5.26953 15.2734ZM15.6328 6.55078C15.7604 6.42318 15.8242 6.26823 15.8242 6.08594C15.8242 5.90365 15.7513 5.7487 15.6055 5.62109L14.1562 4.14453C14.0286 4.01693 13.8737 3.95312 13.6914 3.95312C13.5091 3.95312 13.3542 4.01693 13.2266 4.14453L11.9141 5.45703L14.3203 7.86328L15.6328 6.55078Z" fill="currentColor"/></svg>`,
+  trash: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.2031 14.125C10.9844 14.125 10.875 14.0156 10.875 13.7969V7.89062C10.875 7.67188 10.9844 7.5625 11.2031 7.5625H11.8594C12.0781 7.5625 12.1875 7.67188 12.1875 7.89062V13.7969C12.1875 14.0156 12.0781 14.125 11.8594 14.125H11.2031ZM15.6875 4.9375C15.8151 4.9375 15.9154 4.98307 15.9883 5.07422C16.0794 5.14714 16.125 5.2474 16.125 5.375V5.8125C16.125 5.9401 16.0794 6.04948 15.9883 6.14062C15.9154 6.21354 15.8151 6.25 15.6875 6.25H15.25V15.4375C15.25 15.8021 15.1224 16.112 14.8672 16.3672C14.612 16.6224 14.3021 16.75 13.9375 16.75H6.0625C5.69792 16.75 5.38802 16.6224 5.13281 16.3672C4.8776 16.112 4.75 15.8021 4.75 15.4375V6.25H4.3125C4.1849 6.25 4.07552 6.21354 3.98438 6.14062C3.91146 6.04948 3.875 5.9401 3.875 5.8125V5.375C3.875 5.2474 3.91146 5.14714 3.98438 5.07422C4.07552 4.98307 4.1849 4.9375 4.3125 4.9375H6.55469L7.48438 3.37891C7.73958 2.95964 8.1224 2.75 8.63281 2.75H11.3672C11.8776 2.75 12.2604 2.95964 12.5156 3.37891L13.4453 4.9375H15.6875ZM8.57812 4.14453L8.08594 4.9375H11.9141L11.4219 4.14453C11.3854 4.08984 11.3398 4.0625 11.2852 4.0625H8.71484C8.66016 4.0625 8.61458 4.08984 8.57812 4.14453ZM13.9375 15.4375V6.25H6.0625V15.4375H13.9375ZM8.14062 14.125C7.92188 14.125 7.8125 14.0156 7.8125 13.7969V7.89062C7.8125 7.67188 7.92188 7.5625 8.14062 7.5625H8.79688C9.01562 7.5625 9.125 7.67188 9.125 7.89062V13.7969C9.125 14.0156 9.01562 14.125 8.79688 14.125H8.14062Z" fill="currentColor"/></svg>`,
+  close: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.3398 9.75L14.2656 12.7031C14.4844 12.9036 14.4844 13.1042 14.2656 13.3047L13.582 13.9883C13.3815 14.207 13.181 14.207 12.9805 13.9883L10.0273 11.0625L7.07422 13.9883C6.8737 14.207 6.67318 14.207 6.47266 13.9883L5.78906 13.3047C5.57031 13.1042 5.57031 12.9036 5.78906 12.7031L8.71484 9.75L5.78906 6.79688C5.57031 6.59635 5.57031 6.39583 5.78906 6.19531L6.47266 5.51172C6.67318 5.29297 6.8737 5.29297 7.07422 5.51172L10.0273 8.4375L12.9805 5.51172C13.181 5.29297 13.3815 5.29297 13.582 5.51172L14.2656 6.19531C14.4844 6.39583 14.4844 6.59635 14.2656 6.79688L11.3398 9.75Z" fill="currentColor"/></svg>`,
+  arrowLeft: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.1914 15.7109C10.0273 15.8568 9.8724 15.8568 9.72656 15.7109L4.01172 9.96875C3.84766 9.82292 3.84766 9.67708 4.01172 9.53125L9.72656 3.78906C9.8724 3.64323 10.0273 3.64323 10.1914 3.78906L10.7383 4.33594C10.8841 4.48177 10.8841 4.63672 10.7383 4.80078L6.5 9.03906H15.8242C16.043 9.03906 16.1523 9.14844 16.1523 9.36719V10.1328C16.1523 10.3516 16.043 10.4609 15.8242 10.4609H6.5L10.7383 14.6992C10.8841 14.8633 10.8841 15.0182 10.7383 15.1641L10.1914 15.7109Z" fill="currentColor"/></svg>`,
+  location: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.30469 8.05469C8.77865 7.58073 9.34375 7.34375 10 7.34375C10.6562 7.34375 11.2214 7.58073 11.6953 8.05469C12.1693 8.52865 12.4062 9.09375 12.4062 9.75C12.4062 10.4062 12.1693 10.9714 11.6953 11.4453C11.2214 11.9193 10.6562 12.1562 10 12.1562C9.34375 12.1562 8.77865 11.9193 8.30469 11.4453C7.83073 10.9714 7.59375 10.4062 7.59375 9.75C7.59375 9.09375 7.83073 8.52865 8.30469 8.05469ZM9.20703 10.543C9.42578 10.7435 9.6901 10.8438 10 10.8438C10.3099 10.8438 10.5651 10.7435 10.7656 10.543C10.9844 10.3242 11.0938 10.0599 11.0938 9.75C11.0938 9.4401 10.9844 9.1849 10.7656 8.98438C10.5651 8.76562 10.3099 8.65625 10 8.65625C9.6901 8.65625 9.42578 8.76562 9.20703 8.98438C9.00651 9.1849 8.90625 9.4401 8.90625 9.75C8.90625 10.0599 9.00651 10.3242 9.20703 10.543ZM16.5625 9.09375C16.6901 9.09375 16.7904 9.13932 16.8633 9.23047C16.9544 9.30339 17 9.40365 17 9.53125V9.96875C17 10.0964 16.9544 10.2057 16.8633 10.2969C16.7904 10.3698 16.6901 10.4062 16.5625 10.4062H15.1953C15.0495 11.5911 14.5482 12.612 13.6914 13.4688C12.8529 14.3073 11.8411 14.7995 10.6562 14.9453V16.3125C10.6562 16.4401 10.6107 16.5404 10.5195 16.6133C10.4466 16.7044 10.3464 16.75 10.2188 16.75H9.78125C9.65365 16.75 9.54427 16.7044 9.45312 16.6133C9.38021 16.5404 9.34375 16.4401 9.34375 16.3125V14.9453C8.15885 14.7995 7.13802 14.3073 6.28125 13.4688C5.44271 12.612 4.95052 11.5911 4.80469 10.4062H3.4375C3.3099 10.4062 3.20052 10.3698 3.10938 10.2969C3.03646 10.2057 3 10.0964 3 9.96875V9.53125C3 9.40365 3.03646 9.30339 3.10938 9.23047C3.20052 9.13932 3.3099 9.09375 3.4375 9.09375H4.80469C4.95052 7.90885 5.44271 6.89714 6.28125 6.05859C7.13802 5.20182 8.15885 4.70052 9.34375 4.55469V3.1875C9.34375 3.0599 9.38021 2.95964 9.45312 2.88672C9.54427 2.79557 9.65365 2.75 9.78125 2.75H10.2188C10.3464 2.75 10.4466 2.79557 10.5195 2.88672C10.6107 2.95964 10.6562 3.0599 10.6562 3.1875V4.55469C11.8411 4.70052 12.8529 5.20182 13.6914 6.05859C14.5482 6.89714 15.0495 7.90885 15.1953 9.09375H16.5625ZM7.21094 12.5391C7.97656 13.3047 8.90625 13.6875 10 13.6875C11.0938 13.6875 12.0234 13.3047 12.7891 12.5391C13.5547 11.7734 13.9375 10.8438 13.9375 9.75C13.9375 8.65625 13.5547 7.72656 12.7891 6.96094C12.0234 6.19531 11.0938 5.8125 10 5.8125C8.90625 5.8125 7.97656 6.19531 7.21094 6.96094C6.44531 7.72656 6.0625 8.65625 6.0625 9.75C6.0625 10.8438 6.44531 11.7734 7.21094 12.5391Z" fill="currentColor"/></svg>`,
+  key: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.0833 7.0835C12.0833 6.64079 12.4479 6.25016 12.9167 6.25016C13.3594 6.25016 13.75 6.64079 13.75 7.0835C13.75 7.55225 13.3594 7.91683 12.9167 7.91683C12.4479 7.91683 12.0833 7.55225 12.0833 7.0835ZM12.0833 12.5002C11.8229 12.5002 11.5885 12.5002 11.3542 12.4481L10.625 13.1512C10.5208 13.2814 10.3646 13.3335 10.2083 13.3335H9.16667V14.3752C9.16667 14.7397 8.88021 15.0002 8.54167 15.0002H7.5V16.0418C7.5 16.4064 7.21354 16.6668 6.875 16.6668H3.95833C3.59375 16.6668 3.33333 16.4064 3.33333 16.0418V13.1252C3.33333 12.9689 3.38542 12.8127 3.51562 12.6825L7.55208 8.646C7.5 8.41162 7.5 8.17725 7.5 7.91683C7.5 5.39079 9.53125 3.3335 12.0833 3.3335C14.6094 3.3335 16.6667 5.39079 16.6667 7.91683C16.6667 10.4689 14.6094 12.5002 12.0833 12.5002ZM12.0833 11.2502C13.9062 11.2502 15.4167 9.76579 15.4167 7.91683C15.4167 6.09391 13.9062 4.5835 12.0833 4.5835C10.2344 4.5835 8.75 6.09391 8.75 7.91683C8.75 8.09912 8.75 8.28141 8.77604 8.4637L8.88021 9.0887L4.55729 13.3856V15.4168H6.22396V13.7502H7.89062V12.0835H9.94792L10.9115 11.12L11.5365 11.2241C11.7187 11.2502 11.901 11.2502 12.0833 11.2502Z" fill="currentColor"/></svg>`,
+  email: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.6875 4.5C16.0521 4.5 16.362 4.6276 16.6172 4.88281C16.8724 5.13802 17 5.44792 17 5.8125V13.6875C17 14.0521 16.8724 14.362 16.6172 14.6172C16.362 14.8724 16.0521 15 15.6875 15H4.3125C3.94792 15 3.63802 14.8724 3.38281 14.6172C3.1276 14.362 3 14.0521 3 13.6875V5.8125C3 5.44792 3.1276 5.13802 3.38281 4.88281C3.63802 4.6276 3.94792 4.5 4.3125 4.5H15.6875ZM15.6875 5.8125H4.3125V6.93359C4.95052 7.44401 6.18099 8.41016 8.00391 9.83203C8.00391 9.85026 8.13151 9.96875 8.38672 10.1875C8.64193 10.388 8.83333 10.5339 8.96094 10.625C9.08854 10.6979 9.2526 10.7891 9.45312 10.8984C9.67188 11.0078 9.85417 11.0625 10 11.0625C10.1458 11.0625 10.319 11.0078 10.5195 10.8984C10.7383 10.7891 10.9115 10.6979 11.0391 10.625C11.1667 10.5339 11.3581 10.388 11.6133 10.1875C11.8685 9.96875 11.9961 9.85026 11.9961 9.83203C13.819 8.41016 15.0495 7.44401 15.6875 6.93359V5.8125ZM4.3125 13.6875H15.6875V8.60156C15.0495 9.11198 14.0924 9.86849 12.8164 10.8711C12.7799 10.8893 12.6432 10.9987 12.4062 11.1992C12.1875 11.3997 12.0143 11.5456 11.8867 11.6367C11.7591 11.7279 11.5768 11.8464 11.3398 11.9922C11.1029 12.1198 10.875 12.2201 10.6562 12.293C10.4375 12.3477 10.2188 12.375 10 12.375C9.78125 12.375 9.55339 12.3477 9.31641 12.293C9.09766 12.2201 8.86979 12.1107 8.63281 11.9648C8.41406 11.819 8.24089 11.7005 8.11328 11.6094C7.98568 11.5182 7.80339 11.3815 7.56641 11.1992C7.34766 10.9987 7.22005 10.8893 7.18359 10.8711C5.90755 9.86849 4.95052 9.11198 4.3125 8.60156V13.6875Z" fill="currentColor"/></svg>`,
+  search: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.8906 15.5742C17.0547 15.7201 17.0547 15.875 16.8906 16.0391L16.2891 16.6406C16.125 16.8047 15.9701 16.8047 15.8242 16.6406L12.5156 13.332C12.4427 13.2591 12.4062 13.1862 12.4062 13.1133V12.7305C11.3307 13.6602 10.0911 14.125 8.6875 14.125C7.11979 14.125 5.77995 13.569 4.66797 12.457C3.55599 11.3451 3 10.0052 3 8.4375C3 6.86979 3.55599 5.52995 4.66797 4.41797C5.77995 3.30599 7.11979 2.75 8.6875 2.75C10.2552 2.75 11.5951 3.30599 12.707 4.41797C13.819 5.52995 14.375 6.86979 14.375 8.4375C14.375 9.84115 13.9102 11.0807 12.9805 12.1562H13.3633C13.4544 12.1562 13.5273 12.1927 13.582 12.2656L16.8906 15.5742ZM5.59766 11.5273C6.45443 12.3841 7.48438 12.8125 8.6875 12.8125C9.89062 12.8125 10.9206 12.3841 11.7773 11.5273C12.6341 10.6706 13.0625 9.64062 13.0625 8.4375C13.0625 7.23438 12.6341 6.20443 11.7773 5.34766C10.9206 4.49089 9.89062 4.0625 8.6875 4.0625C7.48438 4.0625 6.45443 4.49089 5.59766 5.34766C4.74089 6.20443 4.3125 7.23438 4.3125 8.4375C4.3125 9.64062 4.74089 10.6706 5.59766 11.5273Z" fill="currentColor"/></svg>`,
+};
+
+const CONFIGURED = !!SUPABASE_URL && !SUPABASE_URL.startsWith('YOUR_') && !!SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('YOUR_');
+const sb = CONFIGURED ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+const state = {
+  session: null,
+  profile: null,
+  profilesById: {},
+  floorPlans: [],
+  ratings: [],
+  notes: [],
+  ready: false,
+  sort: 'best',
+  route: parseHash(),
+};
+
+/* ---------------------------------------------------------------- utils */
+
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function icon(name, cls = '') {
+  return `<span class="icon ${cls}">${ICONS[name] || ''}</span>`;
+}
+
+function normalizeUrl(raw) {
+  let v = (raw || '').trim();
+  if (!v) return null;
+  if (!/^https?:\/\//i.test(v)) v = 'https://' + v;
+  try {
+    const u = new URL(v);
+    return u.href;
+  } catch (e) {
+    return null;
+  }
+}
+
+function hostnameOf(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch (e) {
+    return '';
+  }
+}
+
+function timeAgo(iso) {
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  if (diff < 2592000) return Math.floor(diff / 86400) + 'd ago';
+  return new Date(iso).toLocaleDateString();
+}
+
+function initials(name) {
+  return (name || '?').trim().slice(0, 1).toUpperCase();
+}
+
+function parseHash() {
+  const raw = (location.hash || '#/').slice(1);
+  const parts = raw.split('/').filter(Boolean);
+  if (parts.length === 0) return { name: 'dashboard' };
+  if (parts[0] === 'floorplans' && parts[1] === 'new') return { name: 'new' };
+  if (parts[0] === 'floorplans' && parts[1] && parts[2] === 'edit') return { name: 'edit', id: parts[1] };
+  if (parts[0] === 'floorplans' && parts[1]) return { name: 'detail', id: parts[1] };
+  return { name: 'dashboard' };
+}
+
+function navigate(hash) {
+  location.hash = hash;
+}
+
+function showToast(message, tone = 'default') {
+  const root = document.getElementById('toast-root');
+  const t = document.createElement('div');
+  t.className = 'toast' + (tone === 'alert' ? ' alert' : '');
+  t.textContent = message;
+  root.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+/* ---------------------------------------------------------------- modal */
+
+function openModal(html, { dismissible = false, onMount } = {}) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `<div class="modal-backdrop" data-backdrop><div class="modal" role="dialog">${html}</div></div>`;
+  const backdrop = root.querySelector('[data-backdrop]');
+  function close() { root.innerHTML = ''; }
+  if (dismissible) {
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(); });
+  }
+  if (onMount) onMount(root, close);
+  return close;
+}
+
+function promptDisplayNameModal(defaultName) {
+  return new Promise((resolve) => {
+    openModal(`
+      <h2 class="h2" style="margin-bottom:8px">Welcome</h2>
+      <p class="sm muted" style="margin-bottom:16px">What should we call you in the app?</p>
+      <div class="field" id="name-field">
+        <label>Your name</label>
+        <input id="name-input" type="text" maxlength="30" placeholder="e.g. Wes" value="${escapeHtml(defaultName || '')}" />
+      </div>
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn btn-primary" id="name-submit">Continue</button>
+      </div>
+    `, {
+      dismissible: false,
+      onMount: (root, close) => {
+        const input = root.querySelector('#name-input');
+        input.focus();
+        const submit = () => {
+          const v = input.value.trim();
+          if (!v) { root.querySelector('#name-field').classList.add('has-error'); return; }
+          close();
+          resolve(v);
+        };
+        root.querySelector('#name-submit').addEventListener('click', submit);
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+      },
+    });
+  });
+}
+
+function confirmModal({ title, body, confirmLabel = 'Delete', danger = true }) {
+  return new Promise((resolve) => {
+    openModal(`
+      <h2 class="h2" style="margin-bottom:8px">${escapeHtml(title)}</h2>
+      <p class="sm muted" style="margin-bottom:20px">${escapeHtml(body)}</p>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn btn-ghost" data-cancel>Cancel</button>
+        <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-confirm>${escapeHtml(confirmLabel)}</button>
+      </div>
+    `, {
+      dismissible: true,
+      onMount: (root, close) => {
+        root.querySelector('[data-cancel]').addEventListener('click', () => { close(); resolve(false); });
+        root.querySelector('[data-confirm]').addEventListener('click', () => { close(); resolve(true); });
+      },
+    });
+  });
+}
+
+/* ---------------------------------------------------------------- data */
+
+async function ensureProfile(user) {
+  const { data: existing } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  if (existing) { state.profile = existing; return; }
+  const { count } = await sb.from('profiles').select('*', { count: 'exact', head: true });
+  const color = PALETTE[(count || 0) % PALETTE.length];
+  const name = await promptDisplayNameModal(user.email.split('@')[0]);
+  const { data: created, error } = await sb.from('profiles').insert({ id: user.id, display_name: name, color }).select().single();
+  if (error) { showToast("Couldn't save your name — try refreshing.", 'alert'); return; }
+  state.profile = created;
+}
+
+async function loadAll() {
+  const [{ data: profiles }, { data: floorPlans }, { data: ratings }, { data: notes }] = await Promise.all([
+    sb.from('profiles').select('*'),
+    sb.from('floor_plans').select('*').order('created_at', { ascending: false }),
+    sb.from('floor_plan_ratings').select('*'),
+    sb.from('floor_plan_notes').select('*').order('created_at', { ascending: true }),
+  ]);
+  state.profilesById = Object.fromEntries((profiles || []).map((p) => [p.id, p]));
+  state.floorPlans = floorPlans || [];
+  state.ratings = ratings || [];
+  state.notes = notes || [];
+  state.ready = true;
+}
+
+function ratingsFor(planId) {
+  return state.ratings.filter((r) => r.floor_plan_id === planId);
+}
+function notesFor(planId, kind) {
+  return state.notes.filter((n) => n.floor_plan_id === planId && n.kind === kind);
+}
+function averageFor(planId) {
+  const rs = ratingsFor(planId);
+  if (!rs.length) return null;
+  return rs.reduce((sum, r) => sum + r.stars, 0) / rs.length;
+}
+
+async function upsertRating(planId, stars) {
+  const { error } = await sb.from('floor_plan_ratings').upsert(
+    { floor_plan_id: planId, user_id: state.profile.id, stars },
+    { onConflict: 'floor_plan_id,user_id' }
+  );
+  if (error) { showToast("Couldn't save your rating — try again.", 'alert'); return; }
+  await loadAll();
+  render();
+}
+
+async function addNote(planId, kind, body) {
+  const text = body.trim();
+  if (!text) return;
+  const { error } = await sb.from('floor_plan_notes').insert({ floor_plan_id: planId, user_id: state.profile.id, kind, body: text });
+  if (error) { showToast("Couldn't add that note — try again.", 'alert'); return; }
+  await loadAll();
+  render();
+}
+
+async function deleteNote(noteId) {
+  const { error } = await sb.from('floor_plan_notes').delete().eq('id', noteId);
+  if (error) { showToast("Couldn't remove that note — try again.", 'alert'); return; }
+  await loadAll();
+  render();
+}
+
+async function createFloorPlan({ url, title, notes }) {
+  const source_label = hostnameOf(url);
+  const { data, error } = await sb.from('floor_plans').insert({
+    url, title: title || source_label || 'Untitled floor plan', notes: notes || null,
+    source_label, created_by: state.profile.id,
+  }).select().single();
+  if (error) { showToast("Couldn't save that floor plan — try again.", 'alert'); return null; }
+  await loadAll();
+  return data;
+}
+
+async function updateFloorPlan(id, { url, title, notes }) {
+  const source_label = hostnameOf(url);
+  const { error } = await sb.from('floor_plans').update({
+    url, title: title || source_label || 'Untitled floor plan', notes: notes || null,
+    source_label, updated_at: new Date().toISOString(),
+  }).eq('id', id);
+  if (error) { showToast("Couldn't save your changes — try again.", 'alert'); return false; }
+  await loadAll();
+  return true;
+}
+
+async function deleteFloorPlan(id) {
+  const { error } = await sb.from('floor_plans').delete().eq('id', id);
+  if (error) { showToast("Couldn't delete that floor plan — try again.", 'alert'); return false; }
+  await loadAll();
+  return true;
+}
+
+/* ---------------------------------------------------------------- render pieces */
+
+function renderNavbar() {
+  if (!state.session) return '';
+  const p = state.profile;
+  return `
+    <div class="navbar">
+      <a href="#/" class="navbar-brand">${icon('location')}<span>Our floor plans</span></a>
+      <div class="navbar-user">
+        ${p ? `<span class="avatar" style="background:${p.color}">${initials(p.display_name)}</span><span class="sm">${escapeHtml(p.display_name)}</span>` : ''}
+        <button class="btn btn-ghost" id="sign-out-btn">Sign out</button>
+      </div>
+    </div>`;
+}
+
+function starsReadOnly(value, size = 'icon-sm') {
+  let html = `<span class="stars">`;
+  for (let i = 1; i <= 5; i++) {
+    html += `<span class="icon ${size} ${value >= i ? 'filled' : ''}">${value >= i ? ICONS.starSolid : ICONS.star}</span>`;
+  }
+  return html + `</span>`;
+}
+
+function starsInput(planId, value) {
+  let html = `<span class="stars interactive" data-star-input data-plan="${planId}">`;
+  for (let i = 1; i <= 5; i++) {
+    html += `<button type="button" class="${value >= i ? 'filled' : ''}" data-star-btn="${i}" aria-label="${i} star${i > 1 ? 's' : ''}"><span class="icon">${value >= i ? ICONS.starSolid : ICONS.star}</span></button>`;
+  }
+  return html + `</span>`;
+}
+
+function renderFloorPlanCard(plan) {
+  const rs = ratingsFor(plan.id);
+  const avg = averageFor(plan.id);
+  const people = Object.values(state.profilesById);
+  const likeCount = notesFor(plan.id, 'like').length;
+  const dislikeCount = notesFor(plan.id, 'dislike').length;
+
+  let badge;
+  if (avg === null) badge = `<span class="badge badge-fog">Not rated yet</span>`;
+  else if (avg >= 4 && rs.length === people.length) badge = `<span class="badge badge-mint">${avg.toFixed(1)}★ · you both love it</span>`;
+  else badge = `<span class="badge badge-solar">${avg.toFixed(1)}★ avg</span>`;
+
+  const rows = people.map((p) => {
+    const r = rs.find((x) => x.user_id === p.id);
+    return `<div class="fp-card-rating-row">
+      <span class="avatar" style="background:${p.color};width:18px;height:18px;font-size:10px">${initials(p.display_name)}</span>
+      <span class="name">${escapeHtml(p.display_name)}</span>
+      ${r ? starsReadOnly(r.stars, 'icon-xs') : `<span class="xs">Not rated yet</span>`}
+    </div>`;
+  }).join('');
+
+  return `
+    <a class="fp-card" href="#/floorplans/${plan.id}">
+      <div class="card-title">${escapeHtml(plan.title)}</div>
+      <div class="fp-card-source">${icon('search', 'icon-xs')}${escapeHtml(plan.source_label || '')}</div>
+      <div class="fp-card-ratings">${rows}</div>
+      <div class="fp-card-footer">
+        ${badge}
+        <span class="xs">${likeCount} liked note${likeCount === 1 ? '' : 's'} · ${dislikeCount} disliked note${dislikeCount === 1 ? '' : 's'}</span>
+      </div>
+    </a>`;
+}
+
+function sortedFloorPlans() {
+  const list = [...state.floorPlans];
+  if (state.sort === 'newest') {
+    list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  } else if (state.sort === 'liked') {
+    list.sort((a, b) => notesFor(b.id, 'like').length - notesFor(a.id, 'like').length);
+  } else {
+    list.sort((a, b) => {
+      const avgA = averageFor(a.id), avgB = averageFor(b.id);
+      if (avgA === null && avgB === null) return new Date(b.created_at) - new Date(a.created_at);
+      if (avgA === null) return 1;
+      if (avgB === null) return -1;
+      return avgB - avgA;
+    });
+  }
+  return list;
+}
+
+function renderDashboard() {
+  const list = sortedFloorPlans();
+  const people = Object.values(state.profilesById);
+  const partner = people.find((p) => p.id !== state.profile.id);
+  const subtitle = state.floorPlans.length === 0
+    ? `Start logging the floor plans ${escapeHtml(partner ? 'you and ' + partner.display_name : 'you two')} are considering.`
+    : `You and ${escapeHtml(partner ? partner.display_name : 'your partner')} have logged ${state.floorPlans.length} floor plan${state.floorPlans.length === 1 ? '' : 's'}.`;
+
+  const grid = list.length ? list.map(renderFloorPlanCard).join('') : `
+    <div class="empty-state">
+      ${icon('location', 'icon-lg')}
+      <div class="h2" style="margin-bottom:8px">No floor plans yet</div>
+      <p class="sm muted" style="margin-bottom:20px">Paste a link from a builder's site or listing to start comparing your favorites.</p>
+      <a class="btn btn-primary" href="#/floorplans/new">${icon('add', 'icon-sm')}Add floor plan</a>
+    </div>`;
+
+  return `
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Floor plans</h1>
+          <p class="sm muted" style="margin-top:4px">${subtitle}</p>
+        </div>
+        <div class="page-header-actions">
+          <select id="sort-select" aria-label="Sort">
+            <option value="best" ${state.sort === 'best' ? 'selected' : ''}>Best match</option>
+            <option value="newest" ${state.sort === 'newest' ? 'selected' : ''}>Newest first</option>
+            <option value="liked" ${state.sort === 'liked' ? 'selected' : ''}>Most liked</option>
+          </select>
+          <a class="btn btn-primary" href="#/floorplans/new">${icon('add', 'icon-sm')}Add floor plan</a>
+        </div>
+      </div>
+      <div class="fp-grid">${grid}</div>
+    </div>`;
+}
+
+function renderFloorPlanForm({ mode, plan }) {
+  const isEdit = mode === 'edit';
+  return `
+    <div class="page" style="max-width:560px">
+      <a href="#/${isEdit ? 'floorplans/' + plan.id : ''}" class="back-link">${icon('arrowLeft', 'icon-sm')}${isEdit ? 'Back to floor plan' : 'Back to floor plans'}</a>
+      <h1 class="h2" style="margin-bottom:20px">${isEdit ? 'Edit floor plan' : 'Add floor plan'}</h1>
+      <form id="fp-form" class="card">
+        <div class="field" id="url-field">
+          <label>Link to the floor plan *</label>
+          <input id="fp-url" type="text" placeholder="https://..." value="${escapeHtml(plan ? plan.url : '')}" />
+          <span class="hint">Paste the public page from any floor plan or listing site.</span>
+        </div>
+        <div class="field">
+          <label>Title</label>
+          <input id="fp-title" type="text" placeholder="Auto-filled from the link if left blank" value="${escapeHtml(plan ? plan.title : '')}" />
+        </div>
+        <div class="field">
+          <label>Notes</label>
+          <textarea id="fp-notes" placeholder="e.g. 3 bed, 2200 sqft, corner lot">${escapeHtml(plan ? plan.notes || '' : '')}</textarea>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <a class="btn btn-ghost" href="#/${isEdit ? 'floorplans/' + plan.id : ''}">Cancel</a>
+          <button type="submit" class="btn btn-primary">${isEdit ? 'Save changes' : 'Add floor plan'}</button>
+        </div>
+      </form>
+    </div>`;
+}
+
+function renderNotesSection(planId, kind, label) {
+  const items = notesFor(planId, kind);
+  const rows = items.map((n) => {
+    const person = state.profilesById[n.user_id];
+    const mine = n.user_id === state.profile.id;
+    return `<div class="note-item">
+      <span class="avatar" style="background:${person ? person.color : '#999'};width:18px;height:18px;font-size:10px;margin-top:1px">${initials(person ? person.display_name : '?')}</span>
+      <div class="note-body">
+        <div>${escapeHtml(n.body)}</div>
+        <div class="note-meta">${escapeHtml(person ? person.display_name : 'Someone')} · ${timeAgo(n.created_at)}</div>
+      </div>
+      ${mine ? `<button class="btn btn-ghost btn-icon note-del" data-del-note="${n.id}" aria-label="Remove note">${icon('close', 'icon-xs')}</button>` : ''}
+    </div>`;
+  }).join('') || `<p class="sm muted">Nothing noted yet.</p>`;
+
+  return `
+    <div class="note-section">
+      <div class="label sm" style="margin-bottom:8px">${label}</div>
+      <div class="note-list">${rows}</div>
+      <div class="inline-add">
+        <input type="text" placeholder="${kind === 'like' ? 'What do you like about it?' : "What don't you like about it?"}" data-note-input="${kind}" data-plan="${planId}" />
+        <button class="btn btn-secondary btn-icon" data-note-add="${kind}" data-plan="${planId}" aria-label="Add">${icon('add', 'icon-sm')}</button>
+      </div>
+    </div>`;
+}
+
+function renderDetail(plan) {
+  const rs = ratingsFor(plan.id);
+  const myRating = rs.find((r) => r.user_id === state.profile.id);
+  const people = Object.values(state.profilesById);
+  const others = people.filter((p) => p.id !== state.profile.id);
+  const avg = averageFor(plan.id);
+
+  const otherRatingRows = others.map((p) => {
+    const r = rs.find((x) => x.user_id === p.id);
+    return `<div class="rating-row">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="avatar" style="background:${p.color}">${initials(p.display_name)}</span>
+        <span class="sm">${escapeHtml(p.display_name)}</span>
+      </div>
+      ${r ? starsReadOnly(r.stars) : `<span class="xs">Not rated yet</span>`}
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="page">
+      <a href="#/" class="back-link">${icon('arrowLeft', 'icon-sm')}All floor plans</a>
+      <div class="detail-header">
+        <div class="detail-title-block">
+          <h1 class="h2">${escapeHtml(plan.title)}</h1>
+          <div class="fp-card-source">${icon('search', 'icon-xs')}${escapeHtml(plan.source_label || '')}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <a class="btn btn-secondary" id="open-original" target="_blank" rel="noopener noreferrer">${icon('location', 'icon-sm')}Open original</a>
+          <a class="btn btn-ghost btn-icon" href="#/floorplans/${plan.id}/edit" aria-label="Edit">${icon('edit', 'icon-sm')}</a>
+          <button class="btn btn-ghost btn-icon" id="delete-plan-btn" aria-label="Delete">${icon('trash', 'icon-sm')}</button>
+        </div>
+      </div>
+
+      ${plan.notes ? `<div class="card" style="margin-bottom:24px"><div class="label sm" style="margin-bottom:4px">Notes</div><p class="sm">${escapeHtml(plan.notes)}</p></div>` : ''}
+
+      <div class="detail-grid">
+        <div>
+          <div class="iframe-wrap"><iframe id="fp-iframe" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-popups-to-escape-sandbox" title="${escapeHtml(plan.title)}"></iframe></div>
+          <div class="iframe-note">${icon('search', 'icon-xs')}Some sites block embedding — if this looks empty, use "Open original" above.</div>
+        </div>
+        <div class="stack">
+          <div class="card">
+            <div class="label sm" style="margin-bottom:10px">Your rating</div>
+            ${starsInput(plan.id, myRating ? myRating.stars : 0)}
+            ${otherRatingRows}
+            ${avg !== null ? `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)"><span class="badge badge-mint">${avg.toFixed(1)}★ combined average</span></div>` : ''}
+          </div>
+          <div class="card">
+            ${renderNotesSection(plan.id, 'like', 'What you like')}
+            ${renderNotesSection(plan.id, 'dislike', "What you don't like")}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderLogin() {
+  return `
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-brand">${icon('location')}<span class="h2">Our floor plans</span></div>
+        <div class="card">
+          <div class="field" id="login-email-field">
+            <label>Email</label>
+            <input id="login-email" type="email" autocomplete="username" placeholder="you@example.com" />
+          </div>
+          <div class="field" id="login-password-field">
+            <label>Password</label>
+            <input id="login-password" type="password" autocomplete="current-password" />
+          </div>
+          <p class="error-text" id="login-error" style="display:none;margin-bottom:12px"></p>
+          <button class="btn btn-primary btn-block" id="login-submit">Sign in</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ---------------------------------------------------------------- main render */
+
+function render() {
+  const app = document.getElementById('app');
+
+  if (!CONFIGURED) {
+    app.innerHTML = `<div class="page setup-notice"><div class="card">
+      <h1 class="h2" style="margin-bottom:8px">Setup needed</h1>
+      <p class="sm muted">Add your Supabase project URL and anon key at the top of the &lt;script&gt; block in index.html, then reload. See README.md for the full setup steps.</p>
+    </div></div>`;
+    return;
+  }
+
+  if (!state.session) {
+    app.innerHTML = renderNavbar() + renderLogin();
+    attachLoginHandlers();
+    return;
+  }
+
+  if (!state.ready || !state.profile) {
+    app.innerHTML = renderNavbar() + `<div class="loading-shell">Loading…</div>`;
+    return;
+  }
+
+  let body = '';
+  if (state.route.name === 'dashboard') body = renderDashboard();
+  else if (state.route.name === 'new') body = renderFloorPlanForm({ mode: 'new' });
+  else if (state.route.name === 'detail') {
+    const plan = state.floorPlans.find((p) => p.id === state.route.id);
+    body = plan ? renderDetail(plan) : `<div class="page"><div class="empty-state">${icon('location', 'icon-lg')}<div class="h2">Floor plan not found</div><p class="sm muted" style="margin:8px 0 20px">It may have been removed.</p><a class="btn btn-primary" href="#/">Back to floor plans</a></div></div>`;
+  } else if (state.route.name === 'edit') {
+    const plan = state.floorPlans.find((p) => p.id === state.route.id);
+    body = plan ? renderFloorPlanForm({ mode: 'edit', plan }) : `<div class="page"><div class="empty-state">${icon('location', 'icon-lg')}<div class="h2">Floor plan not found</div><a class="btn btn-primary" style="margin-top:16px" href="#/">Back to floor plans</a></div></div>`;
+  }
+
+  app.innerHTML = renderNavbar() + body;
+  attachHandlers();
+
+  if (state.route.name === 'detail') {
+    const plan = state.floorPlans.find((p) => p.id === state.route.id);
+    if (plan) {
+      const iframeEl = document.getElementById('fp-iframe');
+      const openLink = document.getElementById('open-original');
+      if (iframeEl) iframeEl.src = plan.url;
+      if (openLink) openLink.href = plan.url;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- event wiring */
+
+function attachLoginHandlers() {
+  const submit = async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-error');
+    errEl.style.display = 'none';
+    document.getElementById('login-email-field').classList.remove('has-error');
+    document.getElementById('login-password-field').classList.remove('has-error');
+    if (!email || !password) {
+      if (!email) document.getElementById('login-email-field').classList.add('has-error');
+      if (!password) document.getElementById('login-password-field').classList.add('has-error');
+      return;
+    }
+    const btn = document.getElementById('login-submit');
+    btn.disabled = true;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    btn.disabled = false;
+    if (error) {
+      errEl.textContent = "Couldn't sign in — check your email and password.";
+      errEl.style.display = 'block';
+    }
+  };
+  document.getElementById('login-submit').addEventListener('click', submit);
+  document.getElementById('login-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+}
+
+function attachHandlers() {
+  const signOutBtn = document.getElementById('sign-out-btn');
+  if (signOutBtn) signOutBtn.addEventListener('click', () => sb.auth.signOut());
+
+  const sortSelect = document.getElementById('sort-select');
+  if (sortSelect) sortSelect.addEventListener('change', (e) => { state.sort = e.target.value; render(); });
+
+  document.querySelectorAll('[data-star-input]').forEach((wrap) => {
+    const planId = wrap.dataset.plan;
+    wrap.querySelectorAll('[data-star-btn]').forEach((btn) => {
+      btn.addEventListener('click', () => upsertRating(planId, parseInt(btn.dataset.starBtn, 10)));
+    });
+  });
+
+  document.querySelectorAll('[data-note-add]').forEach((btn) => {
+    const kind = btn.dataset.noteAdd, planId = btn.dataset.plan;
+    const input = document.querySelector(`[data-note-input="${kind}"][data-plan="${planId}"]`);
+    const submit = () => { addNote(planId, kind, input.value); input.value = ''; };
+    btn.addEventListener('click', submit);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+  });
+
+  document.querySelectorAll('[data-del-note]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const ok = await confirmModal({ title: 'Remove this note?', body: 'This note will be deleted for both of you.', confirmLabel: 'Remove' });
+      if (ok) deleteNote(btn.dataset.delNote);
+    });
+  });
+
+  const deletePlanBtn = document.getElementById('delete-plan-btn');
+  if (deletePlanBtn) {
+    deletePlanBtn.addEventListener('click', async () => {
+      const plan = state.floorPlans.find((p) => p.id === state.route.id);
+      const ok = await confirmModal({ title: 'Delete this floor plan?', body: `"${plan.title}" and all its ratings and notes will be removed for both of you. This can't be undone.` });
+      if (ok) { const done = await deleteFloorPlan(plan.id); if (done) { showToast('Floor plan deleted'); navigate('/'); } }
+    });
+  }
+
+  const fpForm = document.getElementById('fp-form');
+  if (fpForm) {
+    fpForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const rawUrl = document.getElementById('fp-url').value;
+      const title = document.getElementById('fp-title').value.trim();
+      const notes = document.getElementById('fp-notes').value.trim();
+      const url = normalizeUrl(rawUrl);
+      const urlField = document.getElementById('url-field');
+      urlField.classList.remove('has-error');
+      const existingErr = urlField.querySelector('.error-text');
+      if (existingErr) existingErr.remove();
+      if (!url) {
+        urlField.classList.add('has-error');
+        urlField.insertAdjacentHTML('beforeend', `<span class="error-text">Enter a valid link, starting with https://</span>`);
+        return;
+      }
+      const submitBtn = fpForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      if (state.route.name === 'edit') {
+        const ok = await updateFloorPlan(state.route.id, { url, title, notes });
+        submitBtn.disabled = false;
+        if (ok) { showToast('Changes saved'); navigate(`/floorplans/${state.route.id}`); }
+      } else {
+        const created = await createFloorPlan({ url, title, notes });
+        submitBtn.disabled = false;
+        if (created) { showToast('Floor plan added'); navigate(`/floorplans/${created.id}`); }
+      }
+    });
+  }
+}
+
+/* ---------------------------------------------------------------- realtime */
+
+let realtimeChannel = null;
+const debouncedReload = debounce(async () => { await loadAll(); render(); }, 300);
+
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+function subscribeRealtime() {
+  if (realtimeChannel) return;
+  realtimeChannel = sb.channel('floor-plan-evaluator')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'floor_plans' }, debouncedReload)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'floor_plan_ratings' }, debouncedReload)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'floor_plan_notes' }, debouncedReload)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, debouncedReload)
+    .subscribe();
+}
+
+/* ---------------------------------------------------------------- boot */
+
+window.addEventListener('hashchange', () => { state.route = parseHash(); render(); });
+
+if (!CONFIGURED) {
+  render();
+} else {
+  sb.auth.onAuthStateChange(async (event, session) => {
+    state.session = session;
+    if (session) {
+      render();
+      await ensureProfile(session.user);
+      await loadAll();
+      subscribeRealtime();
+      render();
+    } else {
+      state.ready = false;
+      state.profile = null;
+      render();
+    }
+  });
+  render();
+}
+</script>
+</body>
+</html>
